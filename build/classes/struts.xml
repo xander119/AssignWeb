@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC  
+"-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"  
+"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<package name="default" extends="struts-default">
+		<interceptors>
+                <interceptor class="com.interceptor.AdminLoginInterceptor" name="adminloginInterceptor">
+				</interceptor>
+                <interceptor class="com.interceptor.CusLoginInterceptor" name="cusloginInterceptor">
+                </interceptor>   
+                
+                <interceptor-stack name="adminStack">
+                        <interceptor-ref name="adminloginInterceptor" />
+                        <interceptor-ref name="defaultStack" />
+                </interceptor-stack>
+                <interceptor-stack name="customerStack">
+                        <interceptor-ref name="cusloginInterceptor" />
+                        <interceptor-ref name="defaultStack" />
+                </interceptor-stack>
+        </interceptors>
+<global-results>
+	<result name="login" type="redirect" >CustomerLogin.jsp</result>	
+	<result name="input" type="redirect" >adminLogin.jsp</result>
+	<result name="error" type="redirect" >404.jsp</result>
+</global-results>
+		<action name="login" class="com.esale.controller.UserCtrl" method="customerLogin">
+				<result name="login" type="chain">toIndex</result>
+				<result name="error">CustomerLogin.jsp</result>
+		</action>
+		<action name="customerReg" class="com.esale.controller.UserCtrl" method="register">
+				<result name="success">customerDetail.jsp</result>
+		</action>
+		<action name="admin" class="com.esale.controller.AdminCtrl" method ="adminLogin" >
+			<result name="login" type="chain">toIndex</result>
+			<result name="error">404.jsp</result>
+		</action>
+		<action name="newCategory" class="com.esale.controller.AdminCtrl" method ="newCate">
+			<interceptor-ref name="adminStack" />
+			<result name ="success">newCategory.jsp</result>
+		</action>
+		<action name= "saveCate" class="com.esale.controller.CategoryCtrl" method="saveCategory">
+			<result name ="success" type="chain">toIndex</result>
+		</action>
+		<action name ="newAccountAc" class="com.esale.controller.AccountCtrl" method="display">
+		<interceptor-ref name="customerStack" />
+			<result name="none">createAcc.jsp</result>
+		</action>
+		<action name= "saveAccount" class="com.esale.controller.AccountCtrl" method="newAcc">
+			<result name ="success">AccountDetails.jsp</result>
+		</action>
+		<action name= "deleteAccount" class="com.esale.controller.AccountCtrl" method="newAcc">
+			<!-- <result name ="success">AccountDetails.jsp</result> -->
+		</action>
+		<action name = "createAdmin" class = "com.esale.controller.AdminCtrl">
+			<interceptor-ref name="adminStack" />
+			<result name ="success">newAdmin.jsp</result>
+		</action>
+		<action name ="newadmin" class = "com.esale.controller.AdminCtrl" method = "createAdmin">
+			<interceptor-ref name="adminStack" />
+			<result name ="success">AdminMenu.jsp</result>
+		</action>
+		<action name ="newItem" class="com.esale.controller.ItemCtrl" >
+			<interceptor-ref name="adminStack" />
+			<result name="success">newItem.jsp</result>
+		</action>
+		<action name="saveItem" class="com.esale.controller.ItemCtrl" method = "saveItem">
+			<interceptor-ref name="fileUpload">
+      		  <param name="maximumSize">2097152</param>
+     		   <param name="allowedTypes">image/png,image/gif,image/jpeg,image/pjpeg</param>
+    		</interceptor-ref>
+   			<interceptor-ref name="defaultStack"></interceptor-ref>
+			<result name="success" type="chain">toIndex</result>
+			<result name="error">404.jsp</result>
+		</action>
+		<action name="manageCustomers" class="com.esale.controller.AdminCtrl" method="logout">
+			<interceptor-ref name="adminStack" />
+			<result></result>
+		</action>
+		<action name = "cancelAction"  class="com.esale.controller.AdminCtrl" method="cancel">
+			<result name="success" type="chain">toIndex</result>
+		</action>
+		<action name ="adminLogout" class="com.esale.controller.AdminCtrl" method="logout">
+			<result name = "success" type="chain">toIndex</result> 
+		</action>
+		<action name="customerLogout" class="com.esale.controller.UserCtrl" method="logout">		
+			<result name="success" type="chain">toIndex</result>
+		</action>
+		<action name="toIndex" class="com.esale.controller.ItemCtrl" method ="display">
+			<result name="success">Index.jsp</result> 
+		</action>
+		<action name ="viewItem" class="com.esale.controller.ItemCtrl" method ="getItemById">
+			<result name ="success">ItemDetail.jsp</result>
+			<result name ="error">404.jsp</result>
+		</action>
+		<action name="toCart" class="com.esale.controller.CartCtrl">
+			<interceptor-ref name="customerStack" />
+			<result name ="success"></result>
+		</action>
+		<action name = "addToCart" class="com.esale.controller.CartCtrl" method="addItemToCart">
+			<result name="success">shoppingCart.jsp</result>
+		</action>
+		<action name="deleteFromCart" class = "com.esale.controller.CartCtrl" method ="delete">
+			<result name="success">shoppingCart.jsp</result>
+		</action>
+		
+	</package>
+
+</struts>
